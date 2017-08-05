@@ -19,7 +19,7 @@ import com.google.codeu.mathlang.core.tokens.Token;
 // FUNCTION
 //
 // This interface is for a single functional unit of work defined by the
-// paramters passed to it as an array of tokens. Functions should avoid
+// parameters passed to it as an array of tokens. Functions should avoid
 // carrying internal state.
 public interface Function {
 

@@ -31,7 +31,7 @@ import com.google.codeu.mathlang.core.tokens.Token;
 //    Note "this is the first half"
 //         "and this is the second";
 //
-// This class is not marked as final so that it can be overriden in our tests.
+// This class is not marked as final so that it can be overridden in our tests.
 public class NoteFunction implements Function {
 
   @Override

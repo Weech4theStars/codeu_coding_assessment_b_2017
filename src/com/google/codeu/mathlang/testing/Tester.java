@@ -48,7 +48,7 @@ public final class Tester {
   // TEST
   //
   // Given sample input and a test criteria, run the input through the
-  // parser and interpeter. Once execution is complete, run the test
+  // parser and interpreter. Once execution is complete, run the test
   // criteria to ensure that the execution met the expectations of the
   // test.
   public void test(String name, String input, TestCriteria criteria) {
