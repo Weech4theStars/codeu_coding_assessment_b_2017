@@ -17,7 +17,14 @@ package com.google.codeu.mathlang.impl;
 import java.io.IOException;
 
 import com.google.codeu.mathlang.core.tokens.Token;
+import com.google.codeu.mathlang.core.tokens.NameToken;
+import com.google.codeu.mathlang.core.tokens.NumberToken;
+import com.google.codeu.mathlang.core.tokens.StringToken;
+import com.google.codeu.mathlang.core.tokens.SymbolToken;
 import com.google.codeu.mathlang.parsing.TokenReader;
+
+import java.lang.Character;
+import java.lang.Double;
 
 // MY TOKEN READER
 //
@@ -27,20 +34,88 @@ import com.google.codeu.mathlang.parsing.TokenReader;
 // work with the test of the system.
 public final class MyTokenReader implements TokenReader {
 
+  private String source;
+  private int index;
+
   public MyTokenReader(String source) {
-    // Your token reader will only be given a string for input. The string will
-    // contain the whole source (0 or more lines).
+	index = 0;
+	this.source = source;
+  }
+
+  private SymbolToken getSymbolToken() {
+    char symbol = source.charAt(index);
+	index++;
+	return new SymbolToken(symbol);
+  }
+
+  private NumberToken getNumberToken() throws IOException {
+    int start = index;
+    while (!(index >= source.length()) && Character.isDigit(source.charAt(index))) {
+      index++;
+    }
+    if (!(index >= source.length()) && source.charAt(index) == '.') {
+      index++;
+    }
+    while (!(index >= source.length()) && Character.isDigit(source.charAt(index))) {
+      index++;
+    }
+
+    String str = source.substring(start, index);
+    return str.length() == 0 ? null : new NumberToken(Double.parseDouble(str));
+  }
+
+  private StringToken getStringToken() throws IOException {
+    index++;
+    int start = index;
+    while (!(index >= source.length()) && source.charAt(index) != '\"') {
+      if (source.charAt(index) == '\n') {
+        throw new IOException();
+      }
+      index++;
+    }
+    if ((index >= source.length())) {
+      return null;
+    }
+    String str = source.substring(start, index);
+    index++;
+    return new StringToken(str);
+  }
+  
+  private NameToken getNameToken() {
+    int start = index;
+	while (!(index >= source.length()) && Character.isAlphabetic(source.charAt(index))) {
+	  index++;
+	}
+	String str = source.substring(start, index);
+	return str.length() == 0 ? null : new NameToken(str);
+  }
+  
+  private boolean isSymbol(char c) {
+    return c == '=' || c == '+' || c == '-' || c == ';';
+  }
+
+  private Token getToken() throws IOException {
+	Token token = null;
+	char start = source.charAt(index);
+    if (Character.isLetter(start)) {
+      token = getNameToken();
+    } else if (Character.isDigit(start)) {
+      token = getNumberToken();
+    } else if (isSymbol(start)) {
+      token = getSymbolToken();
+    } else if (start == '\"') {
+      token = getStringToken(); 
+    } else {
+      throw new IOException();
+    }
+    return token;
   }
 
   @Override
   public Token next() throws IOException {
-    // Most of your work will take place here. For every call to |next| you should
-    // return a token until you reach the end. When there are no more tokens, you
-    // should return |null| to signal the end of input.
-
-    // If for any reason you detect an error in the input, you may throw an IOException
-    // which will stop all execution.
-
-    return null;
+    source = source.trim();
+    if (index >= source.length())
+      return null;
+    return getToken();
   }
 }
